@@ -28,7 +28,7 @@
                         <img src="{{ Auth::user()->avatar}}" class="user-photo" alt="">
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="right: 0:left:auto">
                             <li>
-                                <a href="#" class="dropdown-item">My Dashboard</a>
+                                <a href="{{ route('dashboard')}}" class="dropdown-item">My Dashboard</a>
                             </li>
                             <li>
                                 <a href="#" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit()">Sign Out</a>
@@ -44,7 +44,7 @@
                     <a href="{{ route('login')}}" class="btn btn-master btn-secondary me-3">
                         Sign In
                     </a>
-                    <a href="#" class="btn btn-master btn-primary">
+                    <a href="{{ route('login')}}" class="btn btn-master btn-primary">
                         Sign Up
                     </a>
                 </div>
