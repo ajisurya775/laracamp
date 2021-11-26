@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\http\Controllers\UserController;
 use App\http\Controllers\User\CheckoutController;
 use App\http\Controllers\HomeController;
+use App\http\Controllers\User\DashboardController as UserDashboard;
+use App\http\Controllers\Admin\DashboardController as AdminDashboard;
+use App\http\Controllers\Admin\CheckoutController as AdminCheckout;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,13 +31,23 @@ Route::get('auth/google/callback', [UserController::class,'handleProviderCallbac
 
 Route::middleware(['auth'])->group(function(){
     //checkout route
-    Route::get('checkout/success', [CheckoutController::class,'success'])->name('checkout.success');
-    Route::get('checkout/{camp:slug}', [CheckoutController::class,'create'])->name('checkout.create');
-    Route::post('checkout/{camp}', [CheckoutController::class,'store'])->name('checkout.store');
+    Route::get('checkout/success', [CheckoutController::class,'success'])->name('checkout.success')->middleware('ensureUserRole:user');
+    Route::get('checkout/{camp:slug}', [CheckoutController::class,'create'])->name('checkout.create')->middleware('ensureUserRole:user');
+    Route::post('checkout/{camp}', [CheckoutController::class,'store'])->name('checkout.store')->middleware('ensureUserRole:user');
     
-    //user dashboard route
+    // dashboard route
     Route::get('dashboard', [HomeController::class,'dashboard'])->name('dashboard');
-    Route::get('dashboard/checkout/invoice/{chekout}', [CheckoutController::class,'invoice'])->name('user.checkout.invoice');
+    //user dashboard
+    Route::prefix('user/dashboard')->namespace('User')->name('user.')->middleware('ensureUserRole:user')->group(function(){
+        Route::get('/', [UserDashboard::class, 'index'])->name('dashboard');
+    });
+    //admin dashboard
+    Route::prefix('admin/dashboard')->namespace('Admin')->name('admin.')->middleware('ensureUserRole:admin')->group(function(){
+        Route::get('/', [AdminDashboard::class, 'index'])->name('dashboard');
+
+        Route::post('checkout/{checkout}', [AdminCheckout::class, 'update'])->name('checkout.update');
+    });
+
 });
 
 // Route::get('/dashboard', function () {
